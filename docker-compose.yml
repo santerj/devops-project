@@ -12,11 +12,6 @@ services:
       - 8081:15672
     networks:
       - rabbitmq_net
-    healthcheck:
-        test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
 
   orig:
     container_name: 'orig'
@@ -29,9 +24,8 @@ services:
     networks:
       - rabbitmq_net
     depends_on:
-      rabbitmq:
-        condition: service_healthy
-  
+      - rabbitmq
+
   imed:
     container_name: 'imed'
     build:
