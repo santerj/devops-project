@@ -1,0 +1,53 @@
+version: "3.4"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.9-alpine
+    container_name: 'rabbitmq'
+    networks:
+      - rabbitmq_net
+
+  orig:
+  container_name: 'orig'
+    build:
+      context: orig/
+    networks:
+      - rabbitmq_net
+    depends_on:
+      - rabbitmq
+  
+  imed:
+    container_name: 'imed'
+    build:
+      context: imed/
+    networks:
+      - rabbitmq_net
+    depends_on:
+      - rabbitmq
+
+  obse:
+    container_name: 'obse'
+    build:
+      context: obse/
+    volumes:
+      - ./data:/opt/data
+    networks:
+      - rabbitmq_net
+    depends_on:
+      - rabbitmq
+
+  httpserv:
+    container_name: 'httpserv'
+    build:
+      context: httpserv/
+    ports:
+      - 8080:80
+   volumes: 
+      - ./data:/opt/data
+   depends_on:
+      - rabbitmq
+
+networks:
+  rabbitmq_net:
+    name: rabbitmq_net
+  
