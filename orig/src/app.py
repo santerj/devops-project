@@ -10,7 +10,7 @@ def main():
     host = os.environ.get('RABBITMQ_HOST')
     username = os.environ.get('RABBITMQ_USER')
     password = os.environ.get('RABBITMQ_PASS')
-    pollRabbitmqLiveness(host=host)
+    pollRabbitmqReadiness(host=host)
     credentials = pika.PlainCredentials(username=username, password=password)
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
     channel = connection.channel()
@@ -25,11 +25,11 @@ def main():
     while True:
         time.sleep(10000)
 
-def pollRabbitmqLiveness(host: str) -> None:
+def pollRabbitmqReadiness(host: str) -> None:
     timeout_seconds = 5
     retry_seconds = 5
     retries = 5
-    logging.warning("Checking RabbitMQ liveness...")
+    logging.warning("Checking RabbitMQ readiness...")
     for i in range(retries):
         try:
             r = requests.get(f"http://{host}:15692/metrics", timeout=timeout_seconds)
