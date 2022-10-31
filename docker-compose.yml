@@ -1,16 +1,26 @@
+---
 version: "3.4"
 
 services:
   rabbitmq:
-    image: rabbitmq:3.9-alpine
+    image: rabbitmq:3.9-management-alpine
     container_name: 'rabbitmq'
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbit
+      - RABBITMQ_DEFAULT_PASS=rabbit
+    ports:
+      - 8080:15672
     networks:
       - rabbitmq_net
 
   orig:
-  container_name: 'orig'
+    container_name: 'orig'
     build:
       context: orig/
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=rabbit
+      - RABBITMQ_PASS=rabbit
     networks:
       - rabbitmq_net
     depends_on:
@@ -42,12 +52,13 @@ services:
       context: httpserv/
     ports:
       - 8080:80
-   volumes: 
+    volumes: 
       - ./data:/opt/data
-   depends_on:
+    depends_on:
       - rabbitmq
 
 networks:
   rabbitmq_net:
     name: rabbitmq_net
+    driver: bridge
   
