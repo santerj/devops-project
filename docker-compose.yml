@@ -9,9 +9,14 @@ services:
       - RABBITMQ_DEFAULT_USER=rabbit
       - RABBITMQ_DEFAULT_PASS=rabbit
     ports:
-      - 8080:15672
+      - 8081:15672
     networks:
       - rabbitmq_net
+    healthcheck:
+        test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
   orig:
     container_name: 'orig'
@@ -24,7 +29,8 @@ services:
     networks:
       - rabbitmq_net
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
   
   imed:
     container_name: 'imed'
