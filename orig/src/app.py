@@ -8,7 +8,7 @@ import requests
 
 
 def main():
-    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+    logging.basicConfig(stream=sys.stderr, level=logging.INFO)
     host = os.environ.get('RABBITMQ_HOST')
     username = os.environ.get('RABBITMQ_USER')
     password = os.environ.get('RABBITMQ_PASS')
@@ -34,7 +34,7 @@ def pollRabbitmqReadiness(host: str) -> None:
     timeout_seconds = 5
     retry_seconds = 5
     retries = 5
-    logging.debug("Checking RabbitMQ readiness...")
+    logging.info("Checking RabbitMQ readiness...")
     for i in range(retries):
         try:
             r = requests.get(f"http://{host}:15692/metrics", timeout=timeout_seconds)
@@ -42,7 +42,7 @@ def pollRabbitmqReadiness(host: str) -> None:
                 logging.info("✅ RabbitMQ ready")
                 return
         except requests.exceptions.ConnectionError:
-            logging.debug(f"❌ RabbitMQ not ready, retrying in {retry_seconds} s ({i+1}/{retries})")
+            logging.info(f"❌ RabbitMQ not ready, retrying in {retry_seconds} s ({i+1}/{retries})")
             time.sleep(retry_seconds)
     logging.error("RabbitMQ too slow to start")
     exit(1)
