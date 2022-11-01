@@ -1,1 +1,2 @@
-FROM python:3.10-slim
+FROM nginx:stable-alpine
+COPY nginx.conf /etc/nginx/nginx.conf
