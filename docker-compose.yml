@@ -13,8 +13,8 @@ services:
     networks:
       - rabbitmq_net
 
-  orig:
-    container_name: 'orig'
+  origin:
+    container_name: 'origin'
     build:
       context: orig/
     environment:
@@ -26,17 +26,21 @@ services:
     depends_on:
       - rabbitmq
 
-  imed:
-    container_name: 'imed'
+  intermediate:
+    container_name: 'intermediate'
     build:
       context: imed/
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=rabbit
+      - RABBITMQ_PASS=rabbit
     networks:
       - rabbitmq_net
     depends_on:
       - rabbitmq
 
-  obse:
-    container_name: 'obse'
+  observer:
+    container_name: 'observer'
     build:
       context: obse/
     volumes:
@@ -46,8 +50,8 @@ services:
     depends_on:
       - rabbitmq
 
-  httpserv:
-    container_name: 'httpserv'
+  httpserver:
+    container_name: 'httpserver'
     build:
       context: httpserv/
     ports:
