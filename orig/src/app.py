@@ -10,20 +10,20 @@ def main():
     host = os.environ.get('RABBITMQ_HOST')
     username = os.environ.get('RABBITMQ_USER')
     password = os.environ.get('RABBITMQ_PASS')
-    pollRabbitmqReadiness(host=host)
-    credentials = pika.PlainCredentials(username=username, password=password)
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
-    channel = connection.channel()
 
-    # testing
-    channel.exchange_declare('test', durable=True, exchange_type='topic')
-    channel.queue_declare(queue='A')
-    channel.queue_bind(exchange='test', queue='A', routing_key='A')
-    message = 'Hello World'
-    channel.basic_publish(exchange='test', routing_key='A', body= message)
+    # wait until RabbitMQ service is ready
+    pollRabbitmqReadiness(host=host)
+    conn = initRabbitmqConnection(host, username, password)
+    channel = conn.channel()
+    channel.queue_declare(queue='compse140.o')
+
+    for n in range(3):
+        channel.basic_publish(exchange='', routing_key='compse140.o', body=f'MSG_{{n+1}}')
+        time.sleep(3)
+
+    
+    
     channel.close()
-    while True:
-        time.sleep(10000)
 
 def pollRabbitmqReadiness(host: str) -> None:
     timeout_seconds = 5
@@ -41,5 +41,9 @@ def pollRabbitmqReadiness(host: str) -> None:
             time.sleep(retry_seconds)
     logging.error("RabbitMQ too slow to start")
     exit(1)
+
+def initRabbitmqConnection(host: str, username: str, password: str) -> pika.BlockingConnection:
+    credentials = pika.PlainCredentials(username=username, password=password)
+    return pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
 
 main()
