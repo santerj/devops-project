@@ -16,20 +16,27 @@ def main():
     # wait until RabbitMQ service is ready, init connection
     pollRabbitmqReadiness(host=host)
     conn = initRabbitmqConnection(host, username, password)
-    channel = conn.channel()
-    channel.queue_declare(queue='compse140.o', durable=True)
+    channel_o = conn.channel()
+    channel_i = conn.channel()
+    channel_o.queue_declare(queue='compse140.o', durable=True)
+    channel_i.queue_declare(queue='compse140.i', durable=True)
 
-    for n in range(3):
-        # publish 3 messages
-        channel.basic_publish(exchange='', routing_key='compse140.o', body=f'MSG_{{n+1}}',
-                              properties=pika.BasicProperties(content_type="text/plain"))
-        logging.info("Published message")
-        time.sleep(3)
+    channel_o.basic_consume(queue='compse140.o',
+                      auto_ack=True,
+                      on_message_callback=receiverCallback)
+    channel_o.start_consuming()
 
-    while True:
-        # idle
-        logging.info("Idling...")
-        conn.sleep(60)
+
+def receiverCallback(subChannel: pika.channel.Channel,
+                     method: pika.spec.Basic.Deliver,
+                     properties: pika.spec.BasicProperties,
+                     body: bytes):
+
+    logging.info(f"Received message {body}")
+    #pubChannel.basic_publish(exchange='', routing_key='compse140.i', body=f'Got {body}',
+    #                          properties=pika.BasicProperties(content_type="text/plain"))
+    #logging.info("Published message")
+    time.sleep(1)
 
 def pollRabbitmqReadiness(host: str) -> None:
     timeout_seconds = 5

@@ -38,6 +38,7 @@ services:
       - rabbitmq_net
     depends_on:
       - rabbitmq
+      - origin
 
   observer:
     container_name: 'observer'
