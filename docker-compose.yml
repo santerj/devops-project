@@ -40,7 +40,7 @@ services:
     build:
       context: obse/
     volumes:
-      - ./data:/opt/data
+      - ./data/:/opt/data/
     networks:
       - rabbitmq_net
     depends_on:
@@ -53,7 +53,7 @@ services:
     ports:
       - 8080:80
     volumes: 
-      - ./data:/opt/data
+      - ./data/:/usr/share/nginx/html/
     depends_on:
       - rabbitmq
 
