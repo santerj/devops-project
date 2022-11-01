@@ -27,7 +27,7 @@ def main():
     channel_o.start_consuming()
 
 
-def receiverCallback(subChannel: pika.channel.Channel,
+def receiverCallback(channel: pika.channel.Channel,
                      method: pika.spec.Basic.Deliver,
                      properties: pika.spec.BasicProperties,
                      body: bytes):
