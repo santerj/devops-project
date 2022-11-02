@@ -21,22 +21,26 @@ def main():
     channel_o.queue_declare(queue='compse140.o', durable=True)
     channel_i.queue_declare(queue='compse140.i', durable=True)
 
+    callback = generateCallback(channel_o)
     channel_o.basic_consume(queue='compse140.o',
-                      auto_ack=True,
-                      on_message_callback=receiverCallback)
-    channel_o.start_consuming()
+                    auto_ack=True,
+                    on_message_callback=callback)
+    channel_o.start_consuming()  # service listens to
 
-
-def receiverCallback(channel: pika.channel.Channel,
-                     method: pika.spec.Basic.Deliver,
-                     properties: pika.spec.BasicProperties,
-                     body: bytes):
-
-    logging.info(f"Received message {body}")
-    #pubChannel.basic_publish(exchange='', routing_key='compse140.i', body=f'Got {body}',
-    #                          properties=pika.BasicProperties(content_type="text/plain"))
-    #logging.info("Published message")
-    time.sleep(1)
+def generateCallback(pubChannel: pika.channel.Channel):
+    """Wraps actual consumer callback in order to inject extra arguments"""
+    def callback(channel: pika.channel.Channel,
+            method: pika.spec.Basic.Deliver,
+            properties: pika.spec.BasicProperties,
+            body: bytes):
+        """Send message to 'compse140.i' upon receiving message from 'compse140.o'."""
+        logging.info(f"Received message {body}")
+        bodyAsString = body.decode()
+        pubChannel.basic_publish(exchange='', routing_key='compse140.i', body=f'Got {bodyAsString}',
+                                  properties=pika.BasicProperties(content_type="text/plain"))
+        logging.info("Published message")
+        time.sleep(1)
+    return callback
 
 def pollRabbitmqReadiness(host: str) -> None:
     timeout_seconds = 5
