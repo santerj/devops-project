@@ -28,7 +28,7 @@ def main():
         channel.basic_publish(exchange='', routing_key=PUB_TOPIC, body=msg,
                               properties=pika.BasicProperties(content_type="text/plain"))
         logging.info(f"Published message to {PUB_TOPIC}")
-        time.sleep(3)
+        conn.sleep(3)
 
     logging.info("Idling...")
     while True:
