@@ -1,34 +1,38 @@
 import logging
 import os
-import time
 import sys
+import time
 
 import pika
 import requests
 
 
-def main():
-    logging.basicConfig(stream=sys.stderr, level=logging.INFO)
-    host = os.environ.get('RABBITMQ_HOST')
-    username = os.environ.get('RABBITMQ_USER')
-    password = os.environ.get('RABBITMQ_PASS')
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
+RABBITMQ_USER = os.environ.get('RABBITMQ_USER')
+RABBITMQ_PASS = os.environ.get('RABBITMQ_PASS')
+PUB_TOPIC = os.environ.get('PUB_TOPIC')
+
+
+def main():
     # wait until RabbitMQ service is ready, init connection
-    pollRabbitmqReadiness(host=host)
-    conn = initRabbitmqConnection(host, username, password)
+    pollRabbitmqReadiness(host=RABBITMQ_HOST)
+    conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
     channel = conn.channel()
-    channel.queue_declare(queue='compse140.o', durable=True)
+    channel.queue_declare(queue=PUB_TOPIC, durable=True)
 
     for n in range(3):
         # publish 3 messages
-        channel.basic_publish(exchange='', routing_key='compse140.o', body=f'MSG_{{n+1}}',
+        msg = "MSG_{" + str(n+1) + "}"
+        channel.basic_publish(exchange='', routing_key=PUB_TOPIC, body=msg,
                               properties=pika.BasicProperties(content_type="text/plain"))
-        logging.info("Published message")
+        logging.info(f"Published message to {PUB_TOPIC}")
         time.sleep(3)
 
+    logging.info("Idling...")
     while True:
-        # idle
-        logging.info("Idling...")
+        # Stay idle until termination
         conn.sleep(60)
 
 def pollRabbitmqReadiness(host: str) -> None:
@@ -38,7 +42,7 @@ def pollRabbitmqReadiness(host: str) -> None:
     logging.info("Checking RabbitMQ readiness...")
     for i in range(retries):
         try:
-            r = requests.get(f"http://{host}:15692/metrics", timeout=timeout_seconds)
+            r = requests.get(f"http://{RABBITMQ_HOST}:15692/metrics", timeout=timeout_seconds)
             if r.status_code == 200:
                 logging.info("✅ RabbitMQ ready")
                 return
@@ -48,8 +52,8 @@ def pollRabbitmqReadiness(host: str) -> None:
     logging.error("RabbitMQ too slow to start")
     exit(1)
 
-def initRabbitmqConnection(host: str, username: str, password: str) -> pika.BlockingConnection:
-    credentials = pika.PlainCredentials(username=username, password=password)
-    return pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
+def initRabbitmqConnection(host: str, user: str, passwd: str) -> pika.BlockingConnection:
+    credentials = pika.PlainCredentials(username=RABBITMQ_USER, password=RABBITMQ_PASS)
+    return pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials))
 
 main()
