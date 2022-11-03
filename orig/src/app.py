@@ -24,7 +24,7 @@ def main():
 
     for n in range(3):
         # publish 3 messages
-        msg = "MSG_{" + str(n+1) + "}"
+        msg = f"MSG_{str(n+1)}"
         channel.basic_publish(exchange='', routing_key=PUB_TOPIC, body=msg,
                               properties=pika.BasicProperties(content_type="text/plain"))
         logging.info(f"Published message to {PUB_TOPIC}")
