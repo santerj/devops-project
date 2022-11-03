@@ -27,8 +27,7 @@ def main():
 
     callback = generateCallback(subChannel)
     subChannel.basic_consume(queue=SUB_TOPIC,
-                    auto_ack=True,
-                    on_message_callback=callback)
+                    on_message_callback=callback) 
     subChannel.start_consuming()
 
 def generateCallback(pubChannel: pika.channel.Channel):
