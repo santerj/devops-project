@@ -27,21 +27,21 @@ def main():
     pollRabbitmqReadiness(host=RABBITMQ_HOST)
     conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
     counter = Counter()
-    subChannel_1 = conn.channel()
-    subChannel_2 = conn.channel()
-    subChannel_1.queue_declare(queue=SUB_TOPIC_1, durable=True)
-    subChannel_2.queue_declare(queue=SUB_TOPIC_2, durable=True)
-    subChannel_1.basic_consume(queue=SUB_TOPIC_1, auto_ack=False, on_message_callback=generateCallback(SUB_TOPIC_1, counter))
-    subChannel_2.basic_consume(queue=SUB_TOPIC_2, auto_ack=False, on_message_callback=generateCallback(SUB_TOPIC_2, counter))
-    subChannel_1.start_consuming()
-    subChannel_2.start_consuming()
+    asd = conn.channel()
+    asd.queue_declare(queue=SUB_TOPIC_1)
+    asd.queue_declare(queue=SUB_TOPIC_2)
+    asd.basic_consume(queue=SUB_TOPIC_1, auto_ack=False, on_message_callback=generateCallback(SUB_TOPIC_1, counter))
+    asd.basic_consume(queue=SUB_TOPIC_2, auto_ack=True, on_message_callback=generateCallback(SUB_TOPIC_2, counter))
+    asd.start_consuming()
 
 def generateCallback(topic: str, counter = Counter):
     def callback(channel: pika.channel.Channel, method: pika.spec.Basic.Deliver,
                 properties: pika.spec.BasicProperties, body: bytes):
+            channel.basic_reject(method.delivery_tag)
             bodyAsString = body.decode()
             timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S:%fZ")
             msg = f"{timestamp} {counter.number} {bodyAsString} to {topic}"
+            logging.error(msg)  # 
             counter.number += 1
     return callback
 

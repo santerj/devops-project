@@ -20,26 +20,46 @@ def main():
     # wait until RabbitMQ service is ready, init connection
     pollRabbitmqReadiness(host=RABBITMQ_HOST)
     conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
-    subChannel = conn.channel()
-    pubChannel = conn.channel()
-    subChannel.queue_declare(queue=SUB_TOPIC, durable=True)
-    pubChannel.queue_declare(queue=PUB_TOPIC, durable=True)
-    callback = generateCallback(pubChannel, conn)
-    subChannel.basic_consume(queue=SUB_TOPIC, auto_ack=False, on_message_callback=callback)
-    subChannel.start_consuming()
+    channel = conn.channel()
+    channel.exchange_declare(exchange="compse140", exchange_type="topic")
+    channel.queue_declare(queue="queue", exclusive=True)
+    channel.queue_bind(queue="queue",exchange="compse140",routing_key="o")
+    channel.basic_consume(queue="queue", on_message_callback=callback)
+    channel.start_consuming()
+    
+def callback(channel: pika.channel.Channel, method: pika.spec.Basic.Deliver,
+        properties: pika.spec.BasicProperties, body: bytes):
+    """Send message to $PUB_TOPIC upon receiving message from $SUB_TOPIC."""
+    logging.info(f"Received message")
+    bodyAsString = body.decode()
+    logging.error(bodyAsString)
+    #channel.basic_publish(exchange='', routing_key=PUB_TOPIC, body=f'Got {bodyAsString}',
+    #                            properties=pika.BasicProperties(content_type="text/plain"))
+    #logging.info(f"Published message to {PUB_TOPIC}")
+    time.sleep(1)
 
-def generateCallback(pubChannel: pika.channel.Channel, conn: pika.BlockingConnection):
-    """Wraps actual consumer callback in order to inject extra arguments"""
-    def callback(channel: pika.channel.Channel, method: pika.spec.Basic.Deliver,
-            properties: pika.spec.BasicProperties, body: bytes):
-        """Send message to $PUB_TOPIC upon receiving message from $SUB_TOPIC."""
-        logging.info(f"Received message from {SUB_TOPIC}")
-        bodyAsString = body.decode()
-        pubChannel.basic_publish(exchange='', routing_key=PUB_TOPIC, body=f'Got {bodyAsString}',
-                                  properties=pika.BasicProperties(content_type="text/plain"))
-        logging.info(f"Published message to {PUB_TOPIC}")
-        conn.sleep(1)
-    return callback
+
+
+    # subChannel = conn.channel()
+    # pubChannel = conn.channel()
+    # subChannel.queue_declare(queue=SUB_TOPIC)
+    # pubChannel.queue_declare(queue=PUB_TOPIC)
+    # callback = generateCallback(pubChannel, conn)
+    # subChannel.basic_consume(queue=SUB_TOPIC, auto_ack=True, on_message_callback=callback)
+    # subChannel.start_consuming()
+
+#def generateCallback(channel: pika.channel.Channel, conn: pika.BlockingConnection):
+#    """Wraps actual consumer callback in order to inject extra arguments"""
+#    def callback(channel: pika.channel.Channel, method: pika.spec.Basic.Deliver,
+#            properties: pika.spec.BasicProperties, body: bytes):
+#        """Send message to $PUB_TOPIC upon receiving message from $SUB_TOPIC."""
+#        logging.info(f"Received message from {SUB_TOPIC}")
+#        bodyAsString = body.decode()
+#        channel.basic_publish(exchange='', routing_key=PUB_TOPIC, body=f'Got {bodyAsString}',
+#                                  properties=pika.BasicProperties(content_type="text/plain"))
+#        logging.info(f"Published message to {PUB_TOPIC}")
+#        conn.sleep(1)
+#    return callback
 
 def pollRabbitmqReadiness(host: str) -> None:
     timeout_seconds = 5
