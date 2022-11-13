@@ -12,7 +12,8 @@ logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
 RABBITMQ_USER = os.environ.get('RABBITMQ_USER')
 RABBITMQ_PASS = os.environ.get('RABBITMQ_PASS')
-PUB_TOPIC = os.environ.get('PUB_TOPIC')
+EXCHANGE = os.environ.get('EXCHANGE')
+ROUTING_KEY = os.environ.get('ROUTING_KEY')
 
 
 def main():
@@ -20,14 +21,14 @@ def main():
     pollRabbitmqReadiness(host=RABBITMQ_HOST)
     conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
     channel = conn.channel()
-    channel.exchange_declare(exchange="compse140", exchange_type="topic")
+    channel.exchange_declare(exchange=EXCHANGE, exchange_type="topic")
 
     conn.sleep(5)
 
     for n in range(3):
         # publish 3 messages
         msg = f"MSG_{str(n+1)}"
-        channel.basic_publish(exchange='compse140', routing_key="o", body=msg,
+        channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body=msg,
                               properties=pika.BasicProperties(content_type="text/plain"))
         logging.info(f"Published message")
         conn.sleep(3)

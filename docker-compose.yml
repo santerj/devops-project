@@ -21,7 +21,8 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=rabbit
       - RABBITMQ_PASS=rabbit
-      - PUB_TOPIC=compse140.o
+      - EXCHANGE=compse140
+      - ROUTING_KEY=o
     networks:
       - rabbitmq_net
     depends_on:
