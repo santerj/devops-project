@@ -36,8 +36,10 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=rabbit
       - RABBITMQ_PASS=rabbit
-      - PUB_TOPIC=compse140.i
-      - SUB_TOPIC=compse140.o
+      - EXCHANGE=compse140
+      - QUEUE=imed_queue
+      - ROUTING_KEY_READ=o
+      - ROUTING_KEY_WRITE=i
     networks:
       - rabbitmq_net
     depends_on:
