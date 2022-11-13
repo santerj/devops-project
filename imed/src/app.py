@@ -22,9 +22,9 @@ def main():
     conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
     channel = conn.channel()
     channel.exchange_declare(exchange="compse140", exchange_type="topic")
-    channel.queue_declare(queue="queue", exclusive=True)
-    channel.queue_bind(queue="queue",exchange="compse140",routing_key="o")
-    channel.basic_consume(queue="queue", on_message_callback=callback)
+    channel.queue_declare(queue="imed_queue", exclusive=True)
+    channel.queue_bind(queue="imed_queue", exchange="compse140",routing_key="o")
+    channel.basic_consume(queue="imed_queue", auto_ack=True, on_message_callback=callback)
     channel.start_consuming()
     
 def callback(channel: pika.channel.Channel, method: pika.spec.Basic.Deliver,
@@ -32,10 +32,10 @@ def callback(channel: pika.channel.Channel, method: pika.spec.Basic.Deliver,
     """Send message to $PUB_TOPIC upon receiving message from $SUB_TOPIC."""
     logging.info(f"Received message")
     bodyAsString = body.decode()
-    logging.error(bodyAsString)
-    #channel.basic_publish(exchange='', routing_key=PUB_TOPIC, body=f'Got {bodyAsString}',
-    #                            properties=pika.BasicProperties(content_type="text/plain"))
-    #logging.info(f"Published message to {PUB_TOPIC}")
+    msg = f"Got {bodyAsString}"
+    channel.basic_publish(exchange='compse140', routing_key="i", body=msg,
+                                properties=pika.BasicProperties(content_type="text/plain"))
+    logging.info(f"Published message")
     time.sleep(1)
 
 

@@ -22,12 +22,14 @@ def main():
     channel = conn.channel()
     channel.exchange_declare(exchange="compse140", exchange_type="topic")
 
+    conn.sleep(5)
+
     for n in range(3):
         # publish 3 messages
         msg = f"MSG_{str(n+1)}"
         channel.basic_publish(exchange='compse140', routing_key="o", body=msg,
                               properties=pika.BasicProperties(content_type="text/plain"))
-        logging.info(f"Published message to {PUB_TOPIC}")
+        logging.info(f"Published message")
         conn.sleep(3)
 
     logging.info("Idling...")
