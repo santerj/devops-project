@@ -79,7 +79,7 @@ def pollRabbitmqReadiness(host: str) -> None:
     exit(1)
 
 def initRabbitmqConnection(host: str, user: str, passwd: str) -> pika.BlockingConnection:
-    credentials = pika.PlainCredentials(username=RABBITMQ_USER, password=RABBITMQ_PASS)
-    return pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials))
+    credentials = pika.PlainCredentials(username=user, password=passwd)
+    return pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
 
 main()
