@@ -37,7 +37,7 @@ services:
       - RABBITMQ_USER=rabbit
       - RABBITMQ_PASS=rabbit
       - EXCHANGE=compse140
-      - QUEUE=imed_queue
+      - QUEUE=imed
       - ROUTING_KEY_READ=o
       - ROUTING_KEY_WRITE=i
     networks:
@@ -53,8 +53,12 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=rabbit
       - RABBITMQ_PASS=rabbit
-      - SUB_TOPIC_1=compse140.o
-      - SUB_TOPIC_2=compse140.i
+      - EXCHANGE=compse140
+      - QUEUE_1=obse_o
+      - QUEUE_2=obse_i
+      - ROUTING_KEY_1=o
+      - ROUTING_KEY_2=i
+      - FILE=/opt/data/log.txt
     volumes:
       - ./data/:/opt/data/
     networks:
