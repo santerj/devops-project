@@ -20,14 +20,16 @@ def main():
     pollRabbitmqReadiness(host=RABBITMQ_HOST)
     conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
     channel = conn.channel()
-    channel.queue_declare(queue=PUB_TOPIC, durable=True)
+    channel.exchange_declare(exchange="compse140", exchange_type="topic")
+
+    conn.sleep(5)
 
     for n in range(3):
         # publish 3 messages
         msg = f"MSG_{str(n+1)}"
-        channel.basic_publish(exchange='', routing_key=PUB_TOPIC, body=msg,
+        channel.basic_publish(exchange='compse140', routing_key="o", body=msg,
                               properties=pika.BasicProperties(content_type="text/plain"))
-        logging.info(f"Published message to {PUB_TOPIC}")
+        logging.info(f"Published message")
         conn.sleep(3)
 
     logging.info("Idling...")

@@ -42,33 +42,33 @@ services:
     depends_on:
       - rabbitmq
 
-#  observer:
-#    container_name: 'observer'
-#    build:
-#      context: obse/
-#    environment:
-#      - RABBITMQ_HOST=rabbitmq
-#      - RABBITMQ_USER=rabbit
-#      - RABBITMQ_PASS=rabbit
-#      - SUB_TOPIC_1=compse140.o
-#      - SUB_TOPIC_2=compse140.i
-#    volumes:
-#      - ./data/:/opt/data/
-#    networks:
-#      - rabbitmq_net
-#    depends_on:
-#      - rabbitmq
-
-  httpserver:
-    container_name: 'httpserver'
+  observer:
+    container_name: 'observer'
     build:
-      context: httpserv/
-    ports:
-      - 8080:80
-    volumes: 
-      - ./data/:/usr/share/nginx/html/
+      context: obse/
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=rabbit
+      - RABBITMQ_PASS=rabbit
+      - SUB_TOPIC_1=compse140.o
+      - SUB_TOPIC_2=compse140.i
+    volumes:
+      - ./data/:/opt/data/
+    networks:
+      - rabbitmq_net
     depends_on:
       - rabbitmq
+
+#  httpserver:
+#    container_name: 'httpserver'
+#    build:
+#      context: httpserv/
+#    ports:
+#      - 8080:80
+#    volumes: 
+#      - ./data/:/usr/share/nginx/html/
+#    depends_on:
+#      - rabbitmq
 
 networks:
   rabbitmq_net:
