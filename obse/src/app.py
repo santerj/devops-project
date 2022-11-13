@@ -1,14 +1,12 @@
 import logging
 import os
 import sys
-import time
 
 from datetime import datetime, timezone
 
 from common import pollRabbitmqReadiness, initRabbitmqConnection
 
 import pika
-import requests
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)

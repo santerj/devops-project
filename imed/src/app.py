@@ -6,7 +6,6 @@ import time
 from common import pollRabbitmqReadiness, initRabbitmqConnection
 
 import pika
-import requests
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
