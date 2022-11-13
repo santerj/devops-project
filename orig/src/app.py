@@ -30,7 +30,7 @@ def main():
         msg = f"MSG_{str(n+1)}"
         channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body=msg,
                               properties=pika.BasicProperties(content_type="text/plain"))
-        logging.info(f"Published message")
+        logging.info(f"Published message to {EXCHANGE}.{ROUTING_KEY}")
         conn.sleep(3)
 
     logging.info("Idling...")
