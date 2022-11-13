@@ -16,21 +16,26 @@ RABBITMQ_USER = os.environ.get('RABBITMQ_USER')
 RABBITMQ_PASS = os.environ.get('RABBITMQ_PASS')
 EXCHANGE = os.environ.get('EXCHANGE')
 ROUTING_KEY = os.environ.get('ROUTING_KEY')
+TEST_QUEUE = os.environ.get('TEST_QUEUE')
 
 
 def main():
     # wait until RabbitMQ service is ready, init connection
     pollRabbitmqReadiness(host=RABBITMQ_HOST)
     conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
-
-    # Setup messaging
-    channel = conn.channel()
-    channel.exchange_declare(exchange=EXCHANGE, exchange_type="topic")
-
-    # Probably will be a reduction in points, but imed and obse are (sometimes)
-    # too slow to start and will miss the first message. Sleeping fixes this but is not
-    # an elegant solution.
-    conn.sleep(3)
+    
+    # Try passive queue declares until queue exists (listener is ready)
+    logging.info("Checking for queue readiness...")
+    while True:
+        try:
+            channel = conn.channel()
+            channel.exchange_declare(exchange=EXCHANGE, exchange_type="topic")
+            channel.queue_declare(queue=TEST_QUEUE, passive=True)
+            logging.info(f"✅ Queue {TEST_QUEUE} found, starting!")
+            break
+        except pika.exceptions.ChannelClosedByBroker:
+            logging.info(f"❌ Queue {TEST_QUEUE} not ready, retrying...")
+            conn.sleep(1)
 
     for n in range(3):
         # publish 3 messages

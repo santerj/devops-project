@@ -41,8 +41,8 @@ def main():
     # Setup messaging
     channel = conn.channel()
     channel.exchange_declare(exchange=EXCHANGE, exchange_type="topic")
-    channel.queue_declare(queue=QUEUE_1, exclusive=True)
-    channel.queue_declare(queue=QUEUE_2, exclusive=True)
+    channel.queue_declare(queue=QUEUE_1, exclusive=False)
+    channel.queue_declare(queue=QUEUE_2, exclusive=False)
     channel.queue_bind(queue=QUEUE_1, exchange=EXCHANGE, routing_key=ROUTING_KEY_1)
     channel.queue_bind(queue=QUEUE_2, exchange=EXCHANGE, routing_key=ROUTING_KEY_2)
     channel.basic_consume(queue=QUEUE_1, auto_ack=True, on_message_callback=generateCallback(f"{EXCHANGE}.{ROUTING_KEY_1}", counter, filename=FILE))

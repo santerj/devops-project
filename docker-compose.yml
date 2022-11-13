@@ -22,6 +22,7 @@ services:
       - RABBITMQ_PASS=rabbit
       - EXCHANGE=compse140
       - ROUTING_KEY=o
+      - TEST_QUEUE=obse_i
     networks:
       - rabbitmq_net
     depends_on:
