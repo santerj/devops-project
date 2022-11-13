@@ -3,20 +3,19 @@ version: "3.4"
 
 services:
   rabbitmq:
-    image: rabbitmq:3.9-management-alpine
+    image: rabbitmq:3.9-alpine
     container_name: 'rabbitmq'
     environment:
       - RABBITMQ_DEFAULT_USER=rabbit
       - RABBITMQ_DEFAULT_PASS=rabbit
-    ports:
-      - 8081:15672
     networks:
       - rabbitmq_net
 
   origin:
     container_name: 'origin'
     build:
-      context: orig/
+      context: .
+      dockerfile: orig/Dockerfile
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=rabbit
@@ -31,7 +30,8 @@ services:
   intermediate:
     container_name: 'intermediate'
     build:
-      context: imed/
+      context: .
+      dockerfile: imed/Dockerfile
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=rabbit
@@ -48,7 +48,8 @@ services:
   observer:
     container_name: 'observer'
     build:
-      context: obse/
+      context: .
+      dockerfile: obse/Dockerfile
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_USER=rabbit
