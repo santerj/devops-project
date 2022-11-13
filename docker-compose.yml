@@ -59,16 +59,16 @@ services:
     depends_on:
       - rabbitmq
 
-#  httpserver:
-#    container_name: 'httpserver'
-#    build:
-#      context: httpserv/
-#    ports:
-#      - 8080:80
-#    volumes: 
-#      - ./data/:/usr/share/nginx/html/
-#    depends_on:
-#      - rabbitmq
+  httpserver:
+    container_name: 'httpserver'
+    build:
+      context: httpserv/
+    ports:
+      - 8080:80
+    volumes: 
+      - ./data/:/etc/nginx/html/
+    depends_on:
+      - rabbitmq
 
 networks:
   rabbitmq_net:
