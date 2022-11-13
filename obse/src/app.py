@@ -56,7 +56,7 @@ def generateCallback(topic: str, counter: Counter, filename: str):
                 properties: pika.spec.BasicProperties, body: bytes):
             logging.info(f"Received message from {topic}")
             bodyAsString = body.decode()
-            timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S:%fZ")
+            timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S:%f")[:-3]+"Z"
             msg = f"{timestamp} {counter.number} {bodyAsString} to {topic}\n"
             with open(file=filename, mode="a", encoding="utf-8") as file:
                 file.write(msg)
