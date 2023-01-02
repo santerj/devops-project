@@ -37,12 +37,14 @@ def main():
             logging.info(f"❌ Queue {TEST_QUEUE} not ready, retrying...")
             conn.sleep(1)
 
-    for n in range(3):
+    n = 1
+    while True:
         # publish 3 messages
-        msg = f"MSG_{str(n+1)}"
+        msg = f"MSG_{str(n)}"
         channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body=msg,
                               properties=pika.BasicProperties(content_type="text/plain"))
         logging.info(f"Published message to {EXCHANGE}.{ROUTING_KEY}")
+        n += 1
         conn.sleep(3)
 
     logging.info("Idling...")
