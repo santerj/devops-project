@@ -95,11 +95,6 @@ services:
     environment:
       - REDIS_HOST=redis
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_USER=rabbit
-      - RABBITMQ_PASS=rabbit
-      - EXCHANGE=compse140
-      - QUEUE=state
-      - ROUTING_KEY=#
     depends_on:
       - rabbitmq
       - redis
