@@ -79,6 +79,28 @@ services:
     depends_on:
       - rabbitmq
 
+  redis:
+    image: redis:7.0-alpine
+    container_name: 'redis'
+    networks:
+      - rabbitmq_net
+
+  api-gw:
+    container_name: api-gw
+    build:
+      context: .
+      dockerfile: api-gw/Dockerfile
+    ports:
+      - 8083:8083
+    environment:
+      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq
+      - redis
+    networks:
+      - rabbitmq_net
+
 networks:
   rabbitmq_net:
     name: rabbitmq_net
