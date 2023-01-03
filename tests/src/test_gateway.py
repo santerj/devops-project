@@ -1,8 +1,8 @@
 import pytest
 import requests
 
-APIGW = "http://localhost:8083"
-HTTPSERV = "http://localhost:8080"
+APIGW = "http://localhost:18083"
+HTTPSERV = "http://localhost:18080"
 
 @pytest.fixture
 def get_messages():
