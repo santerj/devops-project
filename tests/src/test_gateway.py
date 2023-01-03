@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-API_HOST = "http://localhost:8083"
+APIGW = "http://localhost:8083"
 HTTPSERV = "http://localhost:8080"
 
 @pytest.fixture
@@ -10,7 +10,7 @@ def get_messages():
         "Content-Type": "text/plain",
         "Accept": "text/plain"
     }
-    return requests.get(API_HOST, headers=headers)
+    return requests.get(APIGW, headers=headers)
 
 def test_messages_code(get_messages):
     assert get_messages.status_code == 200
@@ -23,5 +23,5 @@ def test_messages_payload(get_messages):
     assert r.text == get_messages.text
 
 def test_messages_wrong_method():
-    r = requests.put(API_HOST)
+    r = requests.put(APIGW)
     assert r.status_code == 405
