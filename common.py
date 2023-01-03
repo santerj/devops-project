@@ -3,6 +3,7 @@ import time
 
 import pika
 import requests
+import redis
 
 
 def pollRabbitmqReadiness(host: str) -> None:
@@ -25,3 +26,6 @@ def pollRabbitmqReadiness(host: str) -> None:
 def initRabbitmqConnection(host: str, user: str, passwd: str) -> pika.BlockingConnection:
     credentials = pika.PlainCredentials(username=user, password=passwd)
     return pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
+
+def initRedisConnection(host: str, port: int=6379, db: int=0) -> redis.client.Redis:
+    return redis.Redis(host=host, port=6379, db=0)

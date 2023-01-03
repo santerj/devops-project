@@ -3,9 +3,10 @@ import os
 import sys
 import time
 
-from common import pollRabbitmqReadiness, initRabbitmqConnection
+from common import pollRabbitmqReadiness, initRabbitmqConnection, initRedisConnection
 
 import pika
+import redis
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
@@ -15,6 +16,6 @@ RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
 
 
 def main():
-    pass
+    r = initRedisConnection(REDIS_HOST)
 
 main()
