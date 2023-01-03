@@ -1,0 +1,38 @@
+---
+version: "3.4"
+
+services:
+  redis:
+    image: redis:7.0-alpine
+    container_name: 'redis'
+
+  api-gw:
+    container_name: api-gw
+    build:
+      context: .
+      dockerfile: api-gw/Dockerfile
+    ports:
+      - 8083:8083
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  httpserver:
+    container_name: 'httpserver'
+    build:
+      context: httpserv/
+    ports:
+      - 8080:80
+    volumes: 
+      - ./tests/test-data/:/etc/nginx/html/
+
+  pytest:
+    container_name: 'pytest'
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    depends_on:
+      - api-gw
+      - httpserver
+      - redis
