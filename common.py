@@ -28,4 +28,4 @@ def initRabbitmqConnection(host: str, user: str, passwd: str) -> pika.BlockingCo
     return pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
 
 def initRedisConnection(host: str, port: int=6379, db: int=0) -> redis.client.Redis:
-    return redis.Redis(host=host, port=6379, db=0)
+    return redis.Redis(host=host, port=6379, db=db)
