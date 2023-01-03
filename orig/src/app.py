@@ -47,9 +47,4 @@ def main():
         n += 1
         conn.sleep(3)
 
-    logging.info("Idling...")
-    while True:
-        # Stay idle until termination
-        conn.sleep(60)
-
 main()
