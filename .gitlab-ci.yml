@@ -6,7 +6,7 @@ stages:          # List of stages for jobs, and their order of execution
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
-    - docker-compose -f test-compose.yml up --build --abort-on-container-exit
+    - docker compose -f test-compose.yml up --build --abort-on-container-exit
 
 lint-test-job:   # This job also runs in the test stage.
   stage: test    # It can run at the same time as unit-test-job (in parallel).
@@ -19,4 +19,4 @@ deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   environment: production
   script:
-    - docker-compose up --build --abort-on-container-exit
+    - docker compose up --build --abort-on-container-exit
