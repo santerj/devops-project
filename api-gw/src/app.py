@@ -8,20 +8,37 @@ from common import pollRabbitmqReadiness, initRabbitmqConnection, initRedisConne
 import pika
 import redis
 import requests
-from flask import Flask
+from flask import Flask, Response, request
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
 REDIS_HOST = os.environ.get('REDIS_HOST')
 RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
 
-
 app = Flask(__name__)
 r = initRedisConnection(REDIS_HOST)
+r.set("state", "RUNNING")
 
 @app.route("/messages")
 def messages():
-    r = requests.get("http://httpserver:80")
-    print(r.status_code)
-    text = r.text
-    return text
+    req = requests.get("http://httpserver:80")
+    text = req.text
+    return Response(text, mimetype="text/plain", status=200)
+
+@app.route("/state", methods=["GET", "PUT"])
+def state():
+
+    if request.method == "GET":
+        state = r.get("state").decode()
+        return Response(state, mimetype="text/plain")
+    
+    elif request.method == "PUT":
+        state = request.form.get("state")
+        logging.warning(state)
+        
+        if state not in ("INIT", "PAUSED", "RUNNING", "SHUTDOWN"):
+            return Response("Bad request", status=400, mimetype="text/plain")
+        else:
+            r.set("state", state)
+            return Response("OK", status=200, mimetype="text/plain")
+
