@@ -72,12 +72,14 @@ services:
     container_name: 'httpserver'
     build:
       context: httpserv/
-    ports:
-      - 8080:80
+    #ports:
+    #  - 8080:80
     volumes: 
       - ./data/:/etc/nginx/html/
     depends_on:
       - rabbitmq
+    networks:
+      - nginx_net
 
   redis:
     image: redis:7.0-alpine
@@ -104,9 +106,13 @@ services:
       - redis
     networks:
       - rabbitmq_net
+      - nginx_net
 
 networks:
   rabbitmq_net:
     name: rabbitmq_net
     driver: bridge
   
+  nginx_net:
+    name: nginx_net
+    driver: bridge
