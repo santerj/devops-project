@@ -2,7 +2,7 @@ import pytest
 import requests
 
 APIGW = "http://api-gw:8083"
-HTTPSERV = "http://httpserv:8080"
+HTTPSERV = "http://httpserver:80"
 
 @pytest.fixture
 def get_messages():
