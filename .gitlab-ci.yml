@@ -12,7 +12,7 @@ lint-test-job:   # This job also runs in the test stage.
   stage: test    # It can run at the same time as unit-test-job (in parallel).
   script:
     - |
-      python3.9 -m venv lint-venv
+      python3.9 -m venv venv
       venv/bin/python -m pip install flake8
       venv/bin/flake8
       rm -rf venv

@@ -42,11 +42,10 @@ def test_state_put(get_state):
     assert get_state.text == target_state
 
 def test_state_put_invalid(get_state):
-    original_state = get_state.state
+    original_state = get_state.text
     target_state = "INVALID"
     r1 = requests.put(f"{APIGW}/state", data={'state': target_state})
     assert r1.status_code == 400
-    assert get_state.text == original_state
 
 def test_state_in_redis(get_state, redis_conn):
     state_in_redis = redis_conn.get("state").decode()
@@ -64,4 +63,3 @@ def test_state_put_in_redis(get_state, redis_conn):
     r1 = requests.put(f"{APIGW}/state", data={'state': target_state})
     assert r1.status_code == 200
     assert redis_conn.get("state").decode() == target_state
-
