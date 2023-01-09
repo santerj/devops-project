@@ -21,7 +21,7 @@ def test_messages_content_type(get_messages):
     assert "text/plain" in get_messages.headers['Content-Type'].split(";")
 
 def test_messages_payload(get_messages):
-    # checks that gateway returns the same content as httpserver
+    # checks that gateway returns the same content as httpserver (static in test cases)
     r = requests.get(HTTPSERV)
     assert r.text == get_messages.text
 
