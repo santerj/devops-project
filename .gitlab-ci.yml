@@ -9,6 +9,7 @@ unit-test-job:   # This job runs in the test stage.
     - docker compose -f test-compose.yml up --build --abort-on-container-exit --exit-code-from pytest
 
 lint-test-job:   # This job also runs in the test stage.
+  # TODO: add flake8 + mypy
   stage: test    # It can run at the same time as unit-test-job (in parallel).
   script:
     - echo "Linting code... This will take about 10 seconds."
