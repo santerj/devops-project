@@ -60,7 +60,7 @@ services:
       - QUEUE_2=obse_i
       - ROUTING_KEY_1=o
       - ROUTING_KEY_2=i
-      - FILE=/opt/data/log.txt
+      - FILE=/opt/data/message-log.txt
     volumes:
       - ./data/:/opt/data/
     networks:
@@ -95,6 +95,10 @@ services:
     environment:
       - REDIS_HOST=redis
       - RABBITMQ_HOST=rabbitmq
+      - NGINX_HOST=httpserver
+      - FILE=/var/log/message-log.txt
+    volumes:
+      - ./data/:/var/log/
     depends_on:
       - rabbitmq
       - redis

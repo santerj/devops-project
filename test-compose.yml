@@ -11,10 +11,9 @@ services:
     build:
       context: .
       dockerfile: api-gw/Dockerfile
-    #ports:
-    #  - 18083:8083
     environment:
       - REDIS_HOST=redis
+      - NGINX_HOST=httpserver
     depends_on:
       - redis
 
@@ -22,8 +21,6 @@ services:
     container_name: 'httpserver'
     build:
       context: httpserv/
-    #ports:
-    #  - 18080:80
     volumes:
       - ./tests/test-data/:/etc/nginx/html/
 

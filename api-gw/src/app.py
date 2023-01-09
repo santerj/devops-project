@@ -14,6 +14,7 @@ logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
 REDIS_HOST = os.environ.get('REDIS_HOST')
 RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST')
+NGINX_HOST = os.environ.get('NGINX_HOST')
 
 app = Flask(__name__)
 r = initRedisConnection(REDIS_HOST)
@@ -21,7 +22,7 @@ r.set("state", "RUNNING")
 
 @app.route("/messages")
 def messages():
-    req = requests.get("http://httpserver:80")
+    req = requests.get(f"http://{NGINX_HOST}")
     text = req.text
     return Response(text, mimetype="text/plain", status=200)
 
@@ -34,7 +35,6 @@ def state():
     
     elif request.method == "PUT":
         state = request.form.get("state")
-        logging.warning(state)
         
         if state not in ("INIT", "PAUSED", "RUNNING", "SHUTDOWN"):
             return Response("Bad request", status=400, mimetype="text/plain")
