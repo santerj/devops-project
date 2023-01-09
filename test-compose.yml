@@ -14,8 +14,11 @@ services:
     environment:
       - REDIS_HOST=redis
       - NGINX_HOST=httpserver
+      - FILE=state-log.txt
     depends_on:
       - redis
+    volumes:
+      - ./tests/test-data/:/var/log/
 
   httpserver:
     container_name: 'httpserver'
