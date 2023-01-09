@@ -21,6 +21,7 @@ r = initRedisConnection(REDIS_HOST)
 
 @app.route("/messages")
 def messages():
-    r = requests.get("http://httpserv:18080")
+    r = requests.get("http://httpserver:80")
+    print(r.status_code)
     text = r.text
     return text
