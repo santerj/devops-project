@@ -2,8 +2,6 @@ import pytest
 import requests
 import redis
 
-import logging
-
 APIGW = "http://api-gw:8083"
 HTTPSERV = "http://httpserver:80"
 
@@ -18,7 +16,7 @@ def get_run_log():
 def test_run_log_content_type(get_run_log):
     assert "text/plain" in get_run_log.headers['Content-Type'].split(";")
 
-def test_run_log_content(get_run_log):
+def test_run_log_content():
     # first, make a couple PUT requests to /state
     series = ["RUNNING", "INIT", "RUNNING", "PAUSED", "RUNNING"]
     headers = {
