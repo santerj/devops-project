@@ -13,6 +13,9 @@ def get_run_log():
     }
     return requests.get(f"{APIGW}/run-log", headers=headers)
 
+def test_run_log_code(get_run_log):
+    assert get_run_log.status_code == 200
+
 def test_run_log_content_type(get_run_log):
     assert "text/plain" in get_run_log.headers['Content-Type'].split(";")
 
