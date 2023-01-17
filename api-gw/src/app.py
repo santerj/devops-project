@@ -1,5 +1,7 @@
 import logging
 import os
+import subprocess
+import signal
 import sys
 import time
 
@@ -54,7 +56,27 @@ def state():
             with open(file=FILE, mode="a", encoding="utf-8") as file:
                     file.write(msg)
                     file.close()
-            return Response("OK", status=200, mimetype="text/plain")
+
+            response = Response("OK", status=200, mimetype="text/plain")
+            
+            @response.call_on_close
+            def on_close():
+                if state == "SHUTDOWN":
+                    logging.critical("Received SHUTDOWN, exiting")
+                    os.kill(os.getpid(), signal.SIGINT)
+            
+            return response
+
+@app.after_request
+def response_processor(response):
+    shutdown = request.form.get("state") == "SHUTDOWN"
+
+    @response.call_on_close
+    def process_after_request():
+        if shutdown:
+            exit(1)
+
+    return response
 
 @app.route("/run-log")
 def run_log():
