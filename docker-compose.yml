@@ -23,10 +23,12 @@ services:
       - EXCHANGE=compse140
       - ROUTING_KEY=o
       - TEST_QUEUE=obse_i
+      - REDIS_HOST=redis
     networks:
       - rabbitmq_net
     depends_on:
       - rabbitmq
+      - redis
 
   intermediate:
     container_name: 'intermediate'
@@ -41,10 +43,12 @@ services:
       - QUEUE=imed
       - ROUTING_KEY_READ=o
       - ROUTING_KEY_WRITE=i
+      - REDIS_HOST=redis
     networks:
       - rabbitmq_net
     depends_on:
       - rabbitmq
+      - redis
 
   observer:
     container_name: 'observer'
@@ -61,12 +65,14 @@ services:
       - ROUTING_KEY_1=o
       - ROUTING_KEY_2=i
       - FILE=/opt/data/message-log.txt
+      - REDIS_HOST=redis
     volumes:
       - ./data/:/opt/data/
     networks:
       - rabbitmq_net
     depends_on:
       - rabbitmq
+      - redis
 
   httpserver:
     container_name: 'httpserver'
