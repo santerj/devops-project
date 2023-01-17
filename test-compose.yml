@@ -36,5 +36,3 @@ services:
       - api-gw
       - httpserver
       - redis
-    volumes:
-      - ./tests/test-data/:/tmp/
