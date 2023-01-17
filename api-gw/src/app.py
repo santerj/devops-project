@@ -55,3 +55,11 @@ def state():
                     file.write(msg)
                     file.close()
             return Response("OK", status=200, mimetype="text/plain")
+
+@app.route("/run-log")
+def run_log():
+    with open(file=FILE, mode="r", encoding="utf-8") as file:
+        text = file.read
+        logging.error(text)
+        file.close()
+    return Response(text, mimetype="text/plain", status=200)
