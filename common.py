@@ -23,9 +23,11 @@ def pollRabbitmqReadiness(host: str) -> None:
     logging.error("RabbitMQ too slow to start")
     exit(1)
 
+
 def initRabbitmqConnection(host: str, user: str, passwd: str) -> pika.BlockingConnection:
     credentials = pika.PlainCredentials(username=user, password=passwd)
     return pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
+
 
 def initRedisConnection(host: str, port: int=6379, db: int=0) -> redis.client.Redis:
     retries = 5
