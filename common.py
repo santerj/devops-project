@@ -28,4 +28,15 @@ def initRabbitmqConnection(host: str, user: str, passwd: str) -> pika.BlockingCo
     return pika.BlockingConnection(pika.ConnectionParameters(host=host, credentials=credentials))
 
 def initRedisConnection(host: str, port: int=6379, db: int=0) -> redis.client.Redis:
-    return redis.Redis(host=host, port=6379, db=db)
+    retries = 5
+    retry_seconds = 1
+    for i in range(retries):
+        try:
+            r = redis.Redis(host=host, port=port, db=db)
+            logging.info("✅ Connection to Redis established")
+            return r
+        except redis.exceptions.ConnectionError:
+            logging.info(f"❌ Connection to Redis not established, retrying in {retry_seconds} s ({i+1}/{retries})")
+            time.sleep(retry_seconds)
+    logging.error("Connection to Redis can't be established")
+    exit(1)
