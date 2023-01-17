@@ -1,16 +1,12 @@
 import logging
 import os
-import subprocess
 import signal
 import sys
-import time
 
 from datetime import datetime, timezone
 
-from common import pollRabbitmqReadiness, initRabbitmqConnection, initRedisConnection
+from common import initRedisConnection
 
-import pika
-import redis
 import requests
 from flask import Flask, Response, request
 
@@ -36,36 +32,38 @@ def messages():
     text = req.text
     return Response(text, mimetype="text/plain", status=200)
 
+
 @app.route("/state", methods=["GET", "PUT"])
 def state():
 
     if request.method == "GET":
         state = r.get("state").decode()
         return Response(state, mimetype="text/plain")
-    
+
     elif request.method == "PUT":
         state = request.form.get("state")
-        
+
         if state not in ("INIT", "PAUSED", "RUNNING", "SHUTDOWN"):
             return Response("Bad request", status=400, mimetype="text/plain")
         else:
             r.set("state", state)
             # write to log file
-            timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S:%f")[:-3]+"Z"
+            timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S:%f")[:-3] + "Z"
             msg = f"{timestamp}: {state}\n"
             with open(file=FILE, mode="a", encoding="utf-8") as file:
-                    file.write(msg)
-                    file.close()
+                file.write(msg)
+                file.close()
 
             response = Response("OK", status=200, mimetype="text/plain")
-            
+
             @response.call_on_close
             def on_close():
                 if state == "SHUTDOWN":
                     logging.critical("Received SHUTDOWN, exiting")
                     os.kill(os.getpid(), signal.SIGINT)
-            
+
             return response
+
 
 @app.route("/run-log")
 def run_log():

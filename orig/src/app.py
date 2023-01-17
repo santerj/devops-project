@@ -1,12 +1,10 @@
 import logging
 import os
 import sys
-import time
 
 from common import pollRabbitmqReadiness, initRabbitmqConnection, initRedisConnection
 
 import pika
-import redis
 
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
@@ -26,8 +24,8 @@ def main():
     pollRabbitmqReadiness(host=RABBITMQ_HOST)
     rabbitmq_conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
     redis_conn = initRedisConnection(REDIS_HOST)
-    #redis_conn.set("state", "RUNNING")  # initial value
-    
+    redis_conn.set("state", "RUNNING")  # initial value
+
     # Try passive queue declares until queue exists (listener is ready)
     logging.info("Checking for queue readiness...")
     while True:
@@ -51,13 +49,13 @@ def main():
             # publish messages
             msg = f"MSG_{str(n)}"
             channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body=msg,
-                                properties=pika.BasicProperties(content_type="text/plain"))
+                                  properties=pika.BasicProperties(content_type="text/plain"))
             logging.info(f"Published message to {EXCHANGE}.{ROUTING_KEY}")
             n += 1
         elif state == "INIT":
             n = 1
             channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body="ignore",
-                              properties=pika.BasicProperties(content_type="text/plain"))
+                                  properties=pika.BasicProperties(content_type="text/plain"))
             pass
         elif state == "PAUSED":
             pass
@@ -66,8 +64,9 @@ def main():
             # push one last message to RabbitMQ to relay the shutdown event
             # to imed and obse – their shutdown logic is in the consumer function
             channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body="",
-                              properties=pika.BasicProperties(content_type="text/plain"))
+                                  properties=pika.BasicProperties(content_type="text/plain"))
             sys.exit(0)
         rabbitmq_conn.sleep(3)
+
 
 main()
