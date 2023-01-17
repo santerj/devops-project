@@ -67,21 +67,9 @@ def state():
             
             return response
 
-@app.after_request
-def response_processor(response):
-    shutdown = request.form.get("state") == "SHUTDOWN"
-
-    @response.call_on_close
-    def process_after_request():
-        if shutdown:
-            exit(1)
-
-    return response
-
 @app.route("/run-log")
 def run_log():
     with open(file=FILE, mode="r", encoding="utf-8") as file:
-        text = file.read
-        logging.error(text)
+        text = file.read()
         file.close()
     return Response(text, mimetype="text/plain", status=200)
