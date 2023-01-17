@@ -3,6 +3,8 @@ import os
 import sys
 import time
 
+from datetime import datetime, timezone
+
 from common import pollRabbitmqReadiness, initRabbitmqConnection, initRedisConnection
 
 import pika
@@ -41,11 +43,15 @@ def state():
     
     elif request.method == "PUT":
         state = request.form.get("state")
-        # TODO: write to FILE
         
         if state not in ("INIT", "PAUSED", "RUNNING", "SHUTDOWN"):
             return Response("Bad request", status=400, mimetype="text/plain")
         else:
             r.set("state", state)
+            # write to log file
+            timestamp = datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S:%f")[:-3]+"Z"
+            msg = f"{timestamp}: {state}\n"
+            with open(file=FILE, mode="a", encoding="utf-8") as file:
+                    file.write(msg)
+                    file.close()
             return Response("OK", status=200, mimetype="text/plain")
-
