@@ -54,6 +54,11 @@ def main():
                                 properties=pika.BasicProperties(content_type="text/plain"))
             logging.info(f"Published message to {EXCHANGE}.{ROUTING_KEY}")
             n += 1
+        elif state == "INIT":
+            n = 1
+            channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body="ignore",
+                              properties=pika.BasicProperties(content_type="text/plain"))
+            pass
         elif state == "PAUSED":
             pass
         elif state == "SHUTDOWN":

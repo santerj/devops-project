@@ -48,6 +48,12 @@ def generateCallback(redis: redis.client.Redis):
         
         logging.info(f"Received message from {EXCHANGE}.{ROUTING_KEY_READ}")
         bodyAsString = body.decode()
+
+        # hack
+        if bodyAsString == "ignore":
+            return
+
+
         msg = f"Got {bodyAsString}"
         channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY_WRITE, body=msg,
                                     properties=pika.BasicProperties(content_type="text/plain"))
