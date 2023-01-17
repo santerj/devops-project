@@ -98,7 +98,7 @@ services:
       - REDIS_HOST=redis
       - RABBITMQ_HOST=rabbitmq
       - NGINX_HOST=httpserver
-      - FILE=/var/log/message-log.txt
+      - FILE=/var/log/state-log.txt
     volumes:
       - ./data/:/var/log/
     depends_on:
