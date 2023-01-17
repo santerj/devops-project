@@ -26,6 +26,7 @@ def main():
     pollRabbitmqReadiness(host=RABBITMQ_HOST)
     conn = initRabbitmqConnection(RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS)
     redis = initRedisConnection(REDIS_HOST)
+    redis.set("state", "RUNNING")  # initial value
     
     # Try passive queue declares until queue exists (listener is ready)
     logging.info("Checking for queue readiness...")
@@ -43,20 +44,23 @@ def main():
     n = 1
     while True:
 
-        # publish messages
-        msg = f"MSG_{str(n)}"
-        channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body=msg,
-                              properties=pika.BasicProperties(content_type="text/plain"))
-        logging.info(f"Published message to {EXCHANGE}.{ROUTING_KEY}")
-        n += 1
-        conn.sleep(3)
-
         # check Redis for state
         state = redis.get("state").decode()
-        if state == "SHUTDOWN":
+
+        if state == "RUNNING":
+            # publish messages
+            msg = f"MSG_{str(n)}"
+            channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body=msg,
+                                properties=pika.BasicProperties(content_type="text/plain"))
+            logging.info(f"Published message to {EXCHANGE}.{ROUTING_KEY}")
+            n += 1
+        elif state == "PAUSED":
+            pass
+        elif state == "SHUTDOWN":
             logging.critical("Received SHUTDOWN, exiting")
             channel.basic_publish(exchange=EXCHANGE, routing_key=ROUTING_KEY, body="",
                               properties=pika.BasicProperties(content_type="text/plain"))
             sys.exit(0)
+        conn.sleep(3)
 
 main()
