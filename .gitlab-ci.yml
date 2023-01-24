@@ -22,8 +22,8 @@ deploy-job:      # This job runs in the deploy stage.
   environment: production
   script:
     - |
-      mkdir -p /opt/deploy
-      cp -r * /opt/deploy
-      cd /opt/deploy
+      mkdir -p /opt/deploy/project
+      cp -r * /opt/deploy/project
+      cd /opt/deploy/project
       docker compose down
       docker compose up --build --abort-on-container-exit
