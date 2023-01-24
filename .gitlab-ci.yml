@@ -28,4 +28,4 @@ deploy-job:      # This job runs in the deploy stage.
       cp -r * /opt/deploy/project
       cd /opt/deploy/project
       docker compose down
-      docker compose up --build --detach --abort-on-container-exit
+      docker compose up --build --abort-on-container-exit &
