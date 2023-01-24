@@ -64,8 +64,6 @@ def generateCallback(topic: str, counter: Counter, filename: str, redis_conn: re
     def callback(channel: pika.channel.Channel, method: pika.spec.Basic.Deliver,
                  properties: pika.spec.BasicProperties, body: bytes):
 
-        logging.error(counter.number)
-
         # check Redis for state
         state = redis_conn.get("state").decode()
         if state == "INIT":
