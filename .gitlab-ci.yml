@@ -29,3 +29,4 @@ deploy-job:      # This job runs in the deploy stage.
       cd /opt/deploy/project
       docker compose down
       docker compose up --build --abort-on-container-exit &
+  timeout: 1h 30min
