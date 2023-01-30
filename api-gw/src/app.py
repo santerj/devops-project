@@ -43,7 +43,7 @@ def state():
     elif request.method == "PUT":
     
         if request.headers["Content-Type"] != "text/plain":
-            return Response("415 Unsupported Media Type", status=415, mimetype="text/plain")
+            return Response("Unsupported Media Type", status=415, mimetype="text/plain")
 
         state = request.data.decode()
 
