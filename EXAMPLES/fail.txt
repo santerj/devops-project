@@ -1,0 +1,120 @@
+#####  Failing tests  #####
+
+
+pytest      | ============================= test session starts ==============================
+pytest      | platform linux -- Python 3.10.9, pytest-7.2.0, pluggy-1.0.0
+pytest      | rootdir: /app
+pytest      | collected 14 items
+pytest      | 
+pytest      | test_messages.py ....                                                    [ 28%]
+pytest      | test_run_log.py FF                                                       [ 42%]
+pytest      | test_state.py ........                                                   [100%]
+pytest      | 
+pytest      | =================================== FAILURES ===================================
+pytest      | __________________________ test_run_log_content_type ___________________________
+pytest      | 
+pytest      | get_run_log = <Response [500]>
+pytest      | 
+pytest      |     def test_run_log_content_type(get_run_log):
+pytest      | >       assert "text/plain" in get_run_log.headers['Content-Type'].split(";")
+pytest      | E       AssertionError: assert 'text/plain' in ['text/html', ' charset=utf-8']
+pytest      | E        +  where ['text/html', ' charset=utf-8'] = <built-in method split of str object at 0x7f5a37ab08f0>(';')
+pytest      | E        +    where <built-in method split of str object at 0x7f5a37ab08f0> = 'text/html; charset=utf-8'.split
+pytest      | 
+pytest      | test_run_log.py:17: AssertionError
+pytest      | _____________________________ test_run_log_content _____________________________
+pytest      | 
+pytest      |     def test_run_log_content():
+pytest      |         # first, make a couple PUT requests to /state
+pytest      |         series = ["RUNNING", "INIT", "RUNNING", "PAUSED", "RUNNING"]
+pytest      |         headers = {
+pytest      |             "Content-Type": "text/plain",
+pytest      |             "Accept": "text/plain"
+pytest      |         }
+pytest      |         for state in series:
+pytest      |             requests.put(f"{APIGW}/state", data={'state': state})
+pytest      |     
+pytest      |         # next, ensure that the state has changed in the same order
+pytest      |         log_parts = requests.get(f"{APIGW}/run-log", headers=headers).text.split("\n")
+pytest      |     
+pytest      |         # strip out empty lines
+pytest      |         log_parts = [line for line in log_parts if line != ""]
+pytest      |     
+pytest      |         assert len(series) == len(log_parts)
+pytest      |         for i, line in enumerate(log_parts):
+pytest      |             state = line.split(" ")[-1]  # leave out timestamp
+pytest      | >           assert state == series[i]
+pytest      | E           AssertionError: assert 'html>' == 'RUNNING'
+pytest      | E             - RUNNING
+pytest      | E             + html>
+pytest      | 
+pytest      | test_run_log.py:38: AssertionError
+pytest      | =========================== short test summary info ============================
+pytest      | FAILED test_run_log.py::test_run_log_content_type - AssertionError: assert 't...
+pytest      | FAILED test_run_log.py::test_run_log_content - AssertionError: assert 'html>'...
+pytest      | ========================= 2 failed, 12 passed in 0.25s =========================
+pytest exited with code 1
+
+
+#####  Failing lint  #####
+
+
+Executing "step_script" stage of the job script 00:03
+$ python3.9 -m venv venv # collapsed multi-line command
+Collecting flake8
+  Downloading flake8-6.0.0-py2.py3-none-any.whl (57 kB)
+Collecting pycodestyle<2.11.0,>=2.10.0
+  Downloading pycodestyle-2.10.0-py2.py3-none-any.whl (41 kB)
+Collecting pyflakes<3.1.0,>=3.0.0
+  Downloading pyflakes-3.0.1-py2.py3-none-any.whl (62 kB)
+Collecting mccabe<0.8.0,>=0.7.0
+  Downloading mccabe-0.7.0-py2.py3-none-any.whl (7.3 kB)
+Installing collected packages: pycodestyle, pyflakes, mccabe, flake8
+Successfully installed flake8-6.0.0 mccabe-0.7.0 pycodestyle-2.10.0 pyflakes-3.0.1
+WARNING: You are using pip version 20.2.4; however, version 22.3.1 is available.
+./api-gw/src/app.py:4:1: F401 'time' imported but unused
+./api-gw/src/app.py:6:1: F401 'common.pollRabbitmqReadiness' imported but unused
+./api-gw/src/app.py:6:1: F401 'common.initRabbitmqConnection' imported but unused
+./api-gw/src/app.py:8:1: F401 'pika' imported but unused
+./api-gw/src/app.py:9:1: F401 'redis' imported but unused
+./api-gw/src/app.py:35:1: E302 expected 2 blank lines, found 1
+./api-gw/src/app.py:41:1: W293 blank line contains whitespace
+./api-gw/src/app.py:45:1: W293 blank line contains whitespace
+./api-gw/src/app.py:51:1: W391 blank line at end of file
+./common.py:26:1: E302 expected 2 blank lines, found 1
+./common.py:30:1: E302 expected 2 blank lines, found 1
+./common.py:30:45: E252 missing whitespace around parameter equals
+./common.py:30:46: E252 missing whitespace around parameter equals
+./common.py:30:59: E252 missing whitespace around parameter equals
+./common.py:30:60: E252 missing whitespace around parameter equals
+./imed/src/app.py:27:1: W293 blank line contains whitespace
+./imed/src/app.py:32:54: E231 missing whitespace after ','
+./imed/src/app.py:35:1: W293 blank line contains whitespace
+./imed/src/app.py:36:1: E302 expected 2 blank lines, found 1
+./imed/src/app.py:37:9: E128 continuation line under-indented for visual indent
+./imed/src/app.py:42:33: E127 continuation line over-indented for visual indent
+./imed/src/app.py:46:1: E305 expected 2 blank lines after class or function definition, found 1
+./obse/src/app.py:30:1: E302 expected 2 blank lines, found 1
+./obse/src/app.py:34:1: W293 blank line contains whitespace
+./obse/src/app.py:48:121: E501 line too long (148 > 120 characters)
+./obse/src/app.py:49:121: E501 line too long (148 > 120 characters)
+./obse/src/app.py:56:17: E128 continuation line under-indented for visual indent
+./obse/src/app.py:57:13: E117 over-indented
+./obse/src/app.py:67:1: E305 expected 2 blank lines after class or function definition, found 1
+./obse/src/app.py:67:7: W292 no newline at end of file
+./orig/src/app.py:4:1: F401 'time' imported but unused
+./orig/src/app.py:26:1: W293 blank line contains whitespace
+./orig/src/app.py:50:1: E305 expected 2 blank lines after class or function definition, found 1
+Cleaning up project directory and file based variables 00:00
+ERROR: Job failed: exit status 1
+
+
+#####  Failing deploy  #####
+
+hecking out 27cc4b16 as project...
+Skipping Git submodules setup
+Executing "step_script" stage of the job script 00:00
+$ mkdir -p /opt/deploy # collapsed multi-line command
+mkdir: cannot create directory ‘/opt/deploy’: Permission denied
+Cleaning up project directory and file based variables 00:00
+ERROR: Job failed: exit status 1

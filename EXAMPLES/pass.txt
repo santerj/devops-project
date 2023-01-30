@@ -1,0 +1,94 @@
+#####  Successful tests  #####
+
+
+pytest      | ============================= test session starts ==============================
+pytest      | platform linux -- Python 3.10.9, pytest-7.2.0, pluggy-1.0.0
+pytest      | rootdir: /app
+pytest      | collected 15 items
+pytest      | 
+pytest      | test_messages.py ....                                                    [ 26%]
+pytest      | test_run_log.py ...                                                      [ 46%]
+pytest      | test_state.py ........                                                   [100%]
+pytest      | 
+pytest      | ============================== 15 passed in 0.32s ==============================
+
+
+#####  Successful lint  #####
+
+
+Executing "step_script" stage of the job script 00:04
+$ python3.9 -m venv venv # collapsed multi-line command
+Collecting flake8
+  Using cached flake8-6.0.0-py2.py3-none-any.whl (57 kB)
+Collecting pyflakes<3.1.0,>=3.0.0
+  Using cached pyflakes-3.0.1-py2.py3-none-any.whl (62 kB)
+Collecting mccabe<0.8.0,>=0.7.0
+  Using cached mccabe-0.7.0-py2.py3-none-any.whl (7.3 kB)
+Collecting pycodestyle<2.11.0,>=2.10.0
+  Using cached pycodestyle-2.10.0-py2.py3-none-any.whl (41 kB)
+Installing collected packages: pyflakes, mccabe, pycodestyle, flake8
+Successfully installed flake8-6.0.0 mccabe-0.7.0 pycodestyle-2.10.0 pyflakes-3.0.1
+WARNING: You are using pip version 20.2.4; however, version 22.3.1 is available.
+Cleaning up project directory and file based variables 00:00
+Job succeeded
+
+
+#####  Successful deploy  #####
+
+
+rabbitmq      | 2023-01-30 17:25:30.375915+00:00 [info] <0.743.0> started TCP listener on [::]:5672
+rabbitmq      |  completed with 3 plugins.
+rabbitmq      | 2023-01-30 17:25:30.448904+00:00 [info] <0.672.0> Server startup complete; 3 plugins started.
+rabbitmq      | 2023-01-30 17:25:30.448904+00:00 [info] <0.672.0>  * rabbitmq_prometheus
+rabbitmq      | 2023-01-30 17:25:30.448904+00:00 [info] <0.672.0>  * rabbitmq_web_dispatch
+rabbitmq      | 2023-01-30 17:25:30.448904+00:00 [info] <0.672.0>  * rabbitmq_management_agent
+origin        | INFO:root:✅ RabbitMQ ready
+origin        | INFO:pika.adapters.utils.connection_workflow:Pika version 1.3.1 connecting to ('172.28.0.2', 5672)
+origin        | INFO:pika.adapters.utils.io_services_utils:Socket connected: <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('172.28.0.5', 42458), raddr=('172.28.0.2', 5672)>
+origin        | INFO:pika.adapters.utils.connection_workflow:Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f79378f5450>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f79378f5450> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
+rabbitmq      | 2023-01-30 17:25:30.528594+00:00 [info] <0.750.0> accepting AMQP connection <0.750.0> (172.28.0.5:42458 -> 172.28.0.2:5672)
+origin        | INFO:pika.adapters.utils.connection_workflow:AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f79378f5450> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+origin        | INFO:pika.adapters.utils.connection_workflow:AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f79378f5450> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+origin        | INFO:pika.adapters.blocking_connection:Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f79378f5450> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+origin        | INFO:root:✅ Connection to Redis established
+rabbitmq      | 2023-01-30 17:25:30.533712+00:00 [info] <0.750.0> connection <0.750.0> (172.28.0.5:42458 -> 172.28.0.2:5672): user 'rabbit' authenticated and granted access to vhost '/'
+origin        | INFO:root:Checking for queue readiness...
+origin        | INFO:pika.adapters.blocking_connection:Created channel=1
+rabbitmq      | 2023-01-30 17:25:30.537934+00:00 [error] <0.759.0> Channel error on connection <0.750.0> (172.28.0.5:42458 -> 172.28.0.2:5672, vhost: '/', user: 'rabbit'), channel 1:
+rabbitmq      | 2023-01-30 17:25:30.537934+00:00 [error] <0.759.0> operation queue.declare caused a channel exception not_found: no queue 'obse_i' in vhost '/'
+origin        | WARNING:pika.channel:Received remote Channel.Close (404): "NOT_FOUND - no queue 'obse_i' in vhost '/'" on <Channel number=1 OPEN conn=<SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f79378f5450> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>>
+origin        | INFO:root:❌ Queue obse_i not ready, retrying...
+intermediate  | INFO:root:✅ RabbitMQ ready
+intermediate  | INFO:pika.adapters.utils.connection_workflow:Pika version 1.3.1 connecting to ('172.28.0.2', 5672)
+intermediate  | INFO:pika.adapters.utils.io_services_utils:Socket connected: <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('172.28.0.6', 59930), raddr=('172.28.0.2', 5672)>
+intermediate  | INFO:pika.adapters.utils.connection_workflow:Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fa27eb5dab0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fa27eb5dab0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
+rabbitmq      | 2023-01-30 17:25:30.550689+00:00 [info] <0.766.0> accepting AMQP connection <0.766.0> (172.28.0.6:59930 -> 172.28.0.2:5672)
+intermediate  | INFO:pika.adapters.utils.connection_workflow:AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fa27eb5dab0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+intermediate  | INFO:pika.adapters.utils.connection_workflow:AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fa27eb5dab0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+intermediate  | INFO:pika.adapters.blocking_connection:Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fa27eb5dab0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+rabbitmq      | 2023-01-30 17:25:30.553070+00:00 [info] <0.766.0> connection <0.766.0> (172.28.0.6:59930 -> 172.28.0.2:5672): user 'rabbit' authenticated and granted access to vhost '/'
+intermediate  | INFO:root:✅ Connection to Redis established
+intermediate  | INFO:pika.adapters.blocking_connection:Created channel=1
+observer      | INFO:root:✅ RabbitMQ ready
+observer      | INFO:pika.adapters.utils.connection_workflow:Pika version 1.3.1 connecting to ('172.28.0.2', 5672)
+observer      | INFO:pika.adapters.utils.io_services_utils:Socket connected: <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('172.28.0.7', 35162), raddr=('172.28.0.2', 5672)>
+observer      | INFO:pika.adapters.utils.connection_workflow:Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f72091d82e0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f72091d82e0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).
+rabbitmq      | 2023-01-30 17:25:30.620796+00:00 [info] <0.787.0> accepting AMQP connection <0.787.0> (172.28.0.7:35162 -> 172.28.0.2:5672)
+observer      | INFO:pika.adapters.utils.connection_workflow:AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f72091d82e0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+observer      | INFO:pika.adapters.utils.connection_workflow:AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f72091d82e0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+observer      | INFO:pika.adapters.blocking_connection:Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f72091d82e0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>
+rabbitmq      | 2023-01-30 17:25:30.623311+00:00 [info] <0.787.0> connection <0.787.0> (172.28.0.7:35162 -> 172.28.0.2:5672): user 'rabbit' authenticated and granted access to vhost '/'
+observer      | INFO:root:✅ Connection to Redis established
+observer      | INFO:root:Flushing /opt/data/message-log.txt
+observer      | INFO:pika.adapters.blocking_connection:Created channel=1
+origin        | INFO:pika.adapters.blocking_connection:Created channel=1
+origin        | INFO:root:✅ Queue obse_i found, starting!
+origin        | INFO:root:Published message to compse140.o
+observer      | INFO:root:Received message from compse140.o
+intermediate  | INFO:root:Received message from compse140.o
+intermediate  | INFO:root:Published message to compse140.i
+observer      | INFO:root:Received message from compse140.i
+origin        | INFO:root:Published message to compse140.o
+observer      | INFO:root:Received message from compse140.o
+intermediate  | INFO:root:Received message from compse140.o
+...
