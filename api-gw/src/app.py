@@ -36,14 +36,15 @@ def messages():
 @app.route("/state", methods=["GET", "PUT"])
 def state():
 
-    if request.headers["Content-Type"] != "text/plain":
-        return Response("415 Unsupported Media Type", status=415, mimetype="text/plain")
-
     if request.method == "GET":
         state = r.get("state").decode()
         return Response(state, mimetype="text/plain")
 
     elif request.method == "PUT":
+    
+        if request.headers["Content-Type"] != "text/plain":
+            return Response("415 Unsupported Media Type", status=415, mimetype="text/plain")
+
         state = request.data.decode()
 
         if state not in ("INIT", "PAUSED", "RUNNING", "SHUTDOWN"):
