@@ -37,14 +37,16 @@ def test_state_wrong_methods():
 
 def test_state_put(get_state):
     target_state = "RUNNING"
-    r1 = requests.put(f"{APIGW}/state", data={'state': target_state})
+    r1 = requests.put(f"{APIGW}/state", data=target_state, headers=
+                      {"Content-Type": "text/plain", "Accept": "text/plain"})
     assert r1.status_code == 200  # code for PUT request
     assert get_state.text == target_state
 
 def test_state_put_invalid(get_state):
     original_state = get_state.text
     target_state = "INVALID"
-    r1 = requests.put(f"{APIGW}/state", data={'state': target_state})
+    r1 = requests.put(f"{APIGW}/state", data=target_state, headers=
+                      {"Content-Type": "text/plain", "Accept": "text/plain"})
     assert r1.status_code == 400
 
 def test_state_in_redis(get_state, redis_conn):
@@ -54,12 +56,14 @@ def test_state_in_redis(get_state, redis_conn):
 def test_state_put_in_redis(get_state, redis_conn):
     # first, set state to PAUSED
     target_state = "PAUSED"
-    r1 = requests.put(f"{APIGW}/state", data={'state': target_state})
+    r1 = requests.put(f"{APIGW}/state", data=target_state, headers=
+                      {"Content-Type": "text/plain", "Accept": "text/plain"})
     assert r1.status_code == 200
     assert redis_conn.get("state").decode() == target_state
 
     # next, put new state
     target_state = "RUNNING"
-    r1 = requests.put(f"{APIGW}/state", data={'state': target_state})
+    r1 = requests.put(f"{APIGW}/state", data=target_state, headers=
+                      {"Content-Type": "text/plain", "Accept": "text/plain"})
     assert r1.status_code == 200
     assert redis_conn.get("state").decode() == target_state

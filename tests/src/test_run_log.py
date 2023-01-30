@@ -27,7 +27,8 @@ def test_run_log_content():
         "Accept": "text/plain"
     }
     for state in series:
-        requests.put(f"{APIGW}/state", data={'state': state})
+        requests.put(f"{APIGW}/state", data=state, headers=
+                     {"Content-Type": "text/plain", "Accept": "text/plain"})
 
     # next, ensure that the state has changed in the same order
     log_parts = requests.get(f"{APIGW}/run-log", headers=headers).text.split("\n")
